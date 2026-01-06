@@ -1,4 +1,4 @@
-# ManusPress-Agent-Agency
+# MyPress-Agent-Agency
 
 ## Agência de Conteúdo Multi-Agente para WordPress com RAG (CrewAI)
 
@@ -25,8 +25,8 @@ O processo é dividido em 8 etapas, cada uma executada por um agente especializa
 
 1.  **Clone o Repositório:**
     ```bash
-    git clone https://github.com/SEU_USUARIO/ManusPress-Agent-Agency.git
-    cd ManusPress-Agent-Agency
+    git clone https://github.com/SEU_USUARIO/MyPress-Agent-Agency.git
+    cd MyPress-Agent-Agency
     ```
 
 2.  **Crie o Ambiente Virtual e Instale as Dependências:**

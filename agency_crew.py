@@ -203,7 +203,7 @@ crew = Crew(
 
 # --- 4. Execução da Crew ---
 
-print("--- Iniciando a Agência de Conteúdo Multi-Agente (ManusPress-Agent-Agency) ---")
+print("--- Iniciando a Agência de Conteúdo Multi-Agente (MyPress-Agent-Agency) ---")
 result = crew.kickoff(inputs={'topic': TOPIC})
 
 print("\n\n################################################")
