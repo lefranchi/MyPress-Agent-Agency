@@ -5,8 +5,12 @@ from mypress_agency.tools.custom_tools import rag_retriever_tool, wp_publisher_t
 @CrewBase
 class MyPressAgencyCrew():
     """MyPressAgency crew"""
-    agents_config = 'config/agents.yaml'
-    tasks_config = 'config/tasks.yaml'
+    import os
+    import yaml
+
+    # Caminhos relativos ao arquivo atual
+    agents_config = os.path.join(os.path.dirname(__file__), 'config/agents.yaml')
+    tasks_config = os.path.join(os.path.dirname(__file__), 'config/tasks.yaml')
 
     @agent
     def content_strategist(self) -> Agent:
