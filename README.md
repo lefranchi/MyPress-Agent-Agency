@@ -23,31 +23,39 @@ O processo é dividido em 8 etapas, cada uma executada por um agente especializa
 
 ### 🛠️ Configuração e Instalação
 
+Este projeto utiliza o **uv** para um gerenciamento de dependências extremamente rápido e moderno.
+
 1.  **Clone o Repositório:**
     ```bash
-    git clone https://github.com/SEU_USUARIO/MyPress-Agent-Agency.git
+    git clone https://github.com/lefranchi/MyPress-Agent-Agency.git
     cd MyPress-Agent-Agency
     ```
 
-2.  **Crie o Ambiente Virtual e Instale as Dependências:**
+2.  **Instale o uv (se ainda não tiver):**
     ```bash
-    python3 -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
+    curl -LsSf https://astral.sh/uv/install.sh | sh
     ```
 
 3.  **Configure as Chaves de API:**
-    Renomeie o arquivo `.env.example` para `.env` e preencha com sua chave de API da OpenAI (ou outro LLM compatível):
+    Renomeie o arquivo `.env.example` para `.env` e preencha com sua chave de API da OpenAI:
     ```bash
-    mv .env.example .env
-    # Edite o arquivo .env
+    cp .env.example .env
     ```
 
 4.  **Execução:**
-    Execute o script principal para iniciar a agência:
+    Para rodar a agência, basta usar o comando:
     ```bash
-    python3 agency_crew.py
+    uv run src/mypress_agency/main.py
     ```
+
+### 📂 Estrutura do Projeto
+
+O projeto segue as melhores práticas do CrewAI, utilizando arquivos YAML para configuração:
+
+- `src/mypress_agency/config/agents.yaml`: Definição de personas, metas e backstories.
+- `src/mypress_agency/config/tasks.yaml`: Definição das tarefas e fluxos de trabalho.
+- `src/mypress_agency/crew.py`: Lógica de orquestração da Crew.
+- `src/mypress_agency/tools/`: Ferramentas customizadas (RAG, WordPress, Imagens).
 
 ### 💡 Próximos Passos (Customização)
 
