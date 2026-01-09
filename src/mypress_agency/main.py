@@ -49,7 +49,25 @@ def run():
     }
     
     print("--- Iniciando a Agência de Conteúdo Multi-Agente (MyPress-Agent-Agency) ---")
-    MyPressAgencyCrew().crew().kickoff(inputs=inputs)
+    result = MyPressAgencyCrew().crew().kickoff(inputs=inputs)
+    
+    # --- Exportação Local do Artigo ---
+    output_dir = "outputs/articles"
+    os.makedirs(output_dir, exist_ok=True)
+    
+    from datetime import datetime
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    safe_topic = "".join([c if c.isalnum() else "_" for c in selected_topic])
+    filename = f"article_{timestamp}_{safe_topic[:30]}.md"
+    filepath = os.path.join(output_dir, filename)
+    
+    with open(filepath, "w") as f:
+        f.write(f"# Tópico: {selected_topic}\n\n")
+        f.write(str(result))
+        
+    print(f"\n--- PROCESSO CONCLUÍDO ---")
+    print(f"Artigo salvo em: {filepath}")
+    print(f"Imagens (se geradas) salvas em: outputs/images/")
 
 if __name__ == "__main__":
     run()

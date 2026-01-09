@@ -80,25 +80,79 @@ class ImageGeneratorToolSchema(BaseModel):
 class ImageGeneratorTool(BaseTool):
     name: str = "Image Generator Tool"
     description: str = (
-        "Ferramenta para gerar imagens, ilustrações ou gráficos para acompanhar o post. "
-        "Use-a para criar um visual atraente e relevante."
+        "Ferramenta para gerar imagens reais usando a API da Stability AI. "
+        "Recebe uma descrição detalhada e um estilo visual."
     )
     args_schema: Type[BaseModel] = ImageGeneratorToolSchema
 
     def _run(self, description: str, style: str) -> str:
         """
-        Simula a geração de imagem.
-        Em uma implementação real, este método chamaria uma API de geração de imagem (ex: DALL-E, Midjourney).
+        Gera uma imagem real usando a API da Stability AI.
         """
-        # Placeholder para simular a geração de imagem
+        import os
+        import requests
+        import base64
+        from datetime import datetime
+        from dotenv import load_dotenv
+
+        load_dotenv()
+        api_key = os.getenv("STABILITY_API_KEY")
+        
+        if not api_key or api_key == "SUA_STABILITY_KEY_AQUI":
+            return f"Erro: STABILITY_API_KEY não configurada. Simulação de imagem para: {description} ({style})"
+
+        print(f"Gerando imagem via Stability AI: {description[:50]}...")
+        
+        engine_id = "stable-diffusion-v1-6"
+        api_host = "https://api.stability.ai"
+
+        response = requests.post(
+            f"{api_host}/v1/generation/{engine_id}/text-to-image",
+            headers={
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": f"Bearer {api_key}"
+            },
+            json={
+                "text_prompts": [
+                    {
+                        "text": f"{description}, {style}, high quality, professional photography",
+                        "weight": 1
+                    }
+                ],
+                "cfg_scale": 7,
+                "height": 512,
+                "width": 512,
+                "samples": 1,
+                "steps": 30,
+            },
+        )
+
+        if response.status_code != 200:
+            return f"Erro na API da Stability AI: {response.text}"
+
+        data = response.json()
+        
+        # Cria diretório de saída se não existir
+        output_dir = "outputs/images"
+        os.makedirs(output_dir, exist_ok=True)
+        
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"image_{timestamp}.png"
+        filepath = os.path.join(output_dir, filename)
+
+        for i, image in enumerate(data["artifacts"]):
+            with open(filepath, "wb") as f:
+                f.write(base64.b64decode(image["base64"]))
+
         return f"""
-        [IMAGEM GERADA COM SUCESSO]
+        [IMAGEM GERADA COM SUCESSO VIA STABILITY AI]
         
         Descrição: {description}
         Estilo: {style}
-        Caminho do Arquivo: /assets/images/post-image-{hash(description)}.png
+        Caminho Local: {filepath}
         
-        A imagem está pronta para ser inserida no post.
+        A imagem foi salva localmente e está pronta para o post.
         """
 
 # Instâncias das ferramentas
