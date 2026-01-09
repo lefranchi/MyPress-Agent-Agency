@@ -1,74 +1,87 @@
-# MyPress-Agent-Agency
+# 🚀 MyPress-Agent-Agency
 
-## Agência de Conteúdo Multi-Agente para WordPress com RAG (CrewAI)
+Uma agência de conteúdo multi-agente autônoma, desenvolvida com **CrewAI**, projetada para transformar documentos técnicos em posts de alta qualidade para WordPress. O sistema utiliza **RAG (Retrieval-Augmented Generation)** para garantir que o conteúdo seja tecnicamente preciso e baseado na sua própria base de conhecimento.
 
-Este projeto implementa um sistema multi-agente utilizando o framework **CrewAI** para automatizar a criação de posts de alta qualidade para o WordPress, utilizando uma Base de Conhecimento (RAG - Retrieval-Augmented Generation) como fonte primária de informação.
+## 🌟 Funcionalidades Principais
 
-O sistema simula uma agência de conteúdo completa, com 8 agentes especializados que trabalham em um fluxo sequencial para garantir a qualidade e a otimização do conteúdo.
+- **🤖 8 Agentes Especializados**: Um workflow completo que vai desde a estratégia de conteúdo e SEO até a revisão final e design.
+- **🧠 RAG Real (LangChain + ChromaDB)**: O sistema lê seus PDFs, arquivos de texto e Markdown para fundamentar os artigos.
+- **🎯 Seleção Dinâmica de Temas**: O sistema analisa sua base de conhecimento e sugere temas relevantes automaticamente.
+- **🚫 Controle de Histórico**: Evita a repetição de temas já publicados através de um rastreador de histórico (`published_topics.txt`).
+- **🎨 Geração de Imagens (Stability AI)**: Criação automática de imagens de destaque usando IA generativa.
+- **📦 Exportação Local**: Salva automaticamente o artigo final (Markdown) e a imagem gerada em pastas organizadas (`outputs/`).
+- **⚡ Gerenciamento com UV**: Utiliza o `uv` para um ambiente Python extremamente rápido e consistente.
 
-### 🚀 Workflow da Agência
+## 🏗️ Estrutura do Projeto
 
-O processo é dividido em 8 etapas, cada uma executada por um agente especializado:
+```text
+MyPress-Agent-Agency/
+├── src/mypress_agency/
+│   ├── config/          # Configurações YAML de Agentes e Tarefas
+│   ├── tools/           # Ferramentas customizadas (RAG, WP, Stability)
+│   ├── crew.py          # Orquestração da Crew
+│   ├── main.py          # Ponto de entrada e lógica de temas
+│   └── knowledge_manager.py # Gerenciamento do RAG
+├── knowledge_base/      # Coloque seus documentos aqui (PDF, TXT, MD)
+├── outputs/             # Artigos e imagens gerados
+├── chroma_db/           # Banco de vetores local
+└── pyproject.toml       # Dependências e scripts (uv)
+```
 
-| ID | Agente | Função Principal | Ferramentas |
-| :---: | :--- | :--- | :--- |
-| 1 | **Estrategista de Conteúdo** | Define o briefing e extrai o conteúdo base da Base de Conhecimento (RAG). | `RAGContentRetrieverTool` |
-| 2 | **SEO Specialist** | Otimiza o briefing, define palavras-chave, estrutura de headings e metadados de SEO. | Nenhuma (Usa contexto) |
-| 3 | **Copywriter** | Redige o artigo completo com base no conteúdo RAG e no plano de SEO. | Nenhuma (Usa contexto) |
-| 4 | **Editor de Conteúdo** | Revisa a estrutura, lógica e fluidez do rascunho. | Nenhuma (Usa contexto) |
-| 5 | **Revisor** | Realiza a revisão final de gramática, ortografia e pontuação. | Nenhuma (Usa contexto) |
-| 6 | **Designer de Conteúdo** | Cria o prompt para a geração de imagem/infográfico de destaque. | `ImageGeneratorTool` |
-| 7 | **Social Media Manager** | Adapta o conteúdo para copies de divulgação em redes sociais. | Nenhuma (Usa contexto) |
-| 8 | **Publisher** | Publica o artigo final no WordPress, aplicando formatação e metadados. | `WordPressPublisherTool` |
+## 🛠️ Configuração e Instalação
 
-### 🛠️ Configuração e Instalação
+### 1. Pré-requisitos
+- Python 3.10+
+- [uv](https://astral.sh/uv/) instalado
 
-Este projeto utiliza o **uv** para um gerenciamento de dependências extremamente rápido e moderno.
+### 2. Instalação
+```bash
+git clone https://github.com/lefranchi/MyPress-Agent-Agency.git
+cd MyPress-Agent-Agency
+```
 
-1.  **Clone o Repositório:**
-    ```bash
-    git clone https://github.com/lefranchi/MyPress-Agent-Agency.git
-    cd MyPress-Agent-Agency
-    ```
+### 3. Configuração de Ambiente
+Crie um arquivo `.env` baseado no `.env.example`:
+```bash
+cp .env.example .env
+```
+Preencha as chaves necessárias:
+- `OPENAI_API_KEY`: Para os agentes e embeddings.
+- `STABILITY_API_KEY`: Para a geração de imagens.
 
-2.  **Instale o uv (se ainda não tiver):**
-    ```bash
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    ```
+### 4. Alimente a Base de Conhecimento
+Coloque seus documentos técnicos na pasta `knowledge_base/`. O sistema aceita `.pdf`, `.txt` e `.md`.
 
-3.  **Configure as Chaves de API:**
-    Renomeie o arquivo `.env.example` para `.env` e preencha com sua chave de API da OpenAI:
-    ```bash
-    cp .env.example .env
-    ```
+## 🚀 Como Executar
 
-4.  **Execução:**
-    Para rodar a agência, basta usar o comando:
-    ```bash
-    uv run src/mypress_agency/main.py
-    ```
+Para iniciar a agência e gerar um post:
+```bash
+uv run mypress-agency
+```
 
-### 📂 Estrutura do Projeto
+O sistema irá:
+1. Indexar seus documentos.
+2. Sugerir um tema inédito baseado no conteúdo.
+3. Executar o workflow dos 8 agentes.
+4. Salvar o artigo e a imagem na pasta `outputs/`.
 
-O projeto segue as melhores práticas do CrewAI, utilizando arquivos YAML para configuração:
+## 👥 Os Agentes
 
-- `src/mypress_agency/config/agents.yaml`: Definição de personas, metas e backstories.
-- `src/mypress_agency/config/tasks.yaml`: Definição das tarefas e fluxos de trabalho.
-- `src/mypress_agency/crew.py`: Lógica de orquestração da Crew.
-- `src/mypress_agency/tools/`: Ferramentas customizadas (RAG, WordPress, Imagens).
+| Agente | Responsabilidade | Ferramenta |
+| :--- | :--- | :--- |
+| **Estrategista** | Define persona e extrai contexto do RAG. | `RAGContentRetrieverTool` |
+| **SEO Specialist** | Otimiza palavras-chave e estrutura H1-H3. | Nenhuma |
+| **Copywriter** | Redige o artigo técnico e persuasivo. | Nenhuma |
+| **Editor** | Garante fluidez e qualidade editorial. | Nenhuma |
+| **Revisor** | Correção gramatical e ortográfica final. | Nenhuma |
+| **Designer** | Cria o prompt e gera a imagem de destaque. | `ImageGeneratorTool` (Stability AI) |
+| **Social Media** | Cria chamadas para redes sociais. | Nenhuma |
+| **Publisher** | Prepara a publicação final. | `WordPressPublisherTool` |
 
-### 🧠 Base de Conhecimento (RAG Real)
+## 💡 Próximos Passos
 
-O projeto agora conta com uma implementação real de RAG utilizando **LangChain** e **ChromaDB**.
+- [ ] **Integração Real WordPress**: Atualmente a ferramenta de publicação simula o envio. Você pode atualizar `custom_tools.py` para usar a API REST real do WordPress.
+- [ ] **Suporte a mais formatos**: Adicionar suporte para busca em URLs e vídeos do YouTube.
 
-1.  **Como usar:**
-    *   Coloque seus documentos técnicos (PDF, TXT ou MD) na pasta `knowledge_base/`.
-    *   Ao rodar o sistema, ele irá indexar automaticamente esses documentos em um banco de vetores local (`chroma_db/`).
-    *   O **Estrategista de Conteúdo** usará esses documentos para fundamentar todos os posts criados.
-
-### 💡 Próximos Passos (Customização)
-
-As ferramentas de publicação e imagem ainda estão em modo de simulação. Para completar a automação:
-
-1.  **Integrar a Publicação no WP:** No arquivo `src/mypress_agency/tools/custom_tools.py`, atualize a classe `WordPressPublisherTool` para fazer chamadas reais à API REST do WordPress usando as credenciais do seu `.env`.
-2.  **Integrar a Geração de Imagem:** Atualize a classe `ImageGeneratorTool` para chamar uma API como DALL-E 3 ou Midjourney.
+---
+Desenvolvido com ❤️ para automação inteligente de conteúdo.
