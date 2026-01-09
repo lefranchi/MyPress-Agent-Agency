@@ -87,24 +87,28 @@ class ImageGeneratorTool(BaseTool):
 
     def _run(self, description: str, style: str) -> str:
         """
-        Gera uma imagem real usando a API da Stability AI.
+        Gera uma imagem de fundo via Stability AI e aplica o template de marca localmente.
         """
         import os
         import requests
         import base64
         from datetime import datetime
         from dotenv import load_dotenv
+        from mypress_agency.image_processor import image_processor
 
         load_dotenv()
         api_key = os.getenv("STABILITY_API_KEY")
         
         if not api_key or api_key == "SUA_STABILITY_KEY_AQUI":
-            return f"Erro: STABILITY_API_KEY não configurada. Simulação de imagem para: {description} ({style})"
+            return f"Erro: STABILITY_API_KEY não configurada. Simulação de imagem para: {description}"
 
-        print(f"Gerando imagem via Stability AI: {description[:50]}...")
+        print(f"Gerando fundo da imagem via Stability AI...")
         
         engine_id = "stable-diffusion-v1-6"
         api_host = "https://api.stability.ai"
+
+        # Prompt focado apenas no fundo técnico, sem tentar gerar texto
+        clean_prompt = f"{description}, technical laboratory background, clean composition, high resolution"
 
         response = requests.post(
             f"{api_host}/v1/generation/{engine_id}/text-to-image",
@@ -114,12 +118,7 @@ class ImageGeneratorTool(BaseTool):
                 "Authorization": f"Bearer {api_key}"
             },
             json={
-                "text_prompts": [
-                    {
-                        "text": f"{description}, {style}, high quality, professional photography",
-                        "weight": 1
-                    }
-                ],
+                "text_prompts": [{"text": clean_prompt, "weight": 1}],
                 "cfg_scale": 7,
                 "height": 512,
                 "width": 512,
@@ -131,28 +130,35 @@ class ImageGeneratorTool(BaseTool):
         if response.status_code != 200:
             return f"Erro na API da Stability AI: {response.text}"
 
+        # Salva o fundo temporário
+        temp_bg = "outputs/images/temp_bg.png"
+        os.makedirs("outputs/images", exist_ok=True)
+        
         data = response.json()
-        
-        # Cria diretório de saída se não existir
-        output_dir = "outputs/images"
-        os.makedirs(output_dir, exist_ok=True)
-        
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"image_{timestamp}.png"
-        filepath = os.path.join(output_dir, filename)
+        with open(temp_bg, "wb") as f:
+            f.write(base64.b64decode(data["artifacts"][0]["base64"]))
 
-        for i, image in enumerate(data["artifacts"]):
-            with open(filepath, "wb") as f:
-                f.write(base64.b64decode(image["base64"]))
+        # Aplica o Template de Marca (Composição Híbrida)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        final_filename = f"branded_cover_{timestamp}.png"
+        final_path = os.path.join("outputs/images", final_filename)
+        
+        # O título para a imagem será extraído do contexto ou simplificado da descrição
+        image_title = description.split('.')[0][:30] # Pega a primeira frase curta
+        
+        image_processor.create_branded_cover(temp_bg, image_title, final_path)
+        
+        # Remove o fundo temporário
+        if os.path.exists(temp_bg):
+            os.remove(temp_bg)
 
         return f"""
-        [IMAGEM GERADA COM SUCESSO VIA STABILITY AI]
+        [CAPA PADRONIZADA GERADA COM SUCESSO]
         
-        Descrição: {description}
-        Estilo: {style}
-        Caminho Local: {filepath}
+        Título Aplicado: {image_title}
+        Caminho Final: {final_path}
         
-        A imagem foi salva localmente e está pronta para o post.
+        A imagem segue o padrão visual da marca (Cores, Fontes e Layout).
         """
 
 # Instâncias das ferramentas
