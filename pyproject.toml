@@ -5,11 +5,17 @@ description = "Agência de Conteúdo Multi-Agente para WordPress com RAG"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
+    "chromadb>=1.1.1",
     "crewai>=0.28.8",
     "crewai-tools>=0.1.6",
+    "langchain>=0.3.27",
+    "langchain-community>=0.3.31",
+    "langchain-openai>=0.3.23",
     "openai>=1.0.0",
+    "pypdf>=6.6.0",
     "python-dotenv>=1.0.0",
     "pyyaml>=6.0.0",
+    "sentence-transformers>=5.2.0",
 ]
 
 [project.scripts]

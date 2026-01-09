@@ -57,10 +57,18 @@ O projeto segue as melhores práticas do CrewAI, utilizando arquivos YAML para c
 - `src/mypress_agency/crew.py`: Lógica de orquestração da Crew.
 - `src/mypress_agency/tools/`: Ferramentas customizadas (RAG, WordPress, Imagens).
 
+### 🧠 Base de Conhecimento (RAG Real)
+
+O projeto agora conta com uma implementação real de RAG utilizando **LangChain** e **ChromaDB**.
+
+1.  **Como usar:**
+    *   Coloque seus documentos técnicos (PDF, TXT ou MD) na pasta `knowledge_base/`.
+    *   Ao rodar o sistema, ele irá indexar automaticamente esses documentos em um banco de vetores local (`chroma_db/`).
+    *   O **Estrategista de Conteúdo** usará esses documentos para fundamentar todos os posts criados.
+
 ### 💡 Próximos Passos (Customização)
 
-As ferramentas (`tools.py`) estão atualmente em modo de simulação (placeholder). Para uma implementação completa, você precisará:
+As ferramentas de publicação e imagem ainda estão em modo de simulação. Para completar a automação:
 
-1.  **Implementar o RAG Real:** Substituir o `_run` da `RAGContentRetrieverTool` por uma lógica que use LangChain/LlamaIndex para buscar em seus documentos reais.
-2.  **Integrar a Publicação no WP:** Substituir o `_run` da `WordPressPublisherTool` para fazer chamadas reais à API REST do WordPress.
-3.  **Integrar a Geração de Imagem:** Substituir o `_run` da `ImageGeneratorTool` para chamar uma API de geração de imagem (ex: DALL-E, Midjourney).
+1.  **Integrar a Publicação no WP:** No arquivo `src/mypress_agency/tools/custom_tools.py`, atualize a classe `WordPressPublisherTool` para fazer chamadas reais à API REST do WordPress usando as credenciais do seu `.env`.
+2.  **Integrar a Geração de Imagem:** Atualize a classe `ImageGeneratorTool` para chamar uma API como DALL-E 3 ou Midjourney.

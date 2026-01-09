@@ -19,26 +19,25 @@ class RAGContentRetrieverTool(BaseTool):
 
     def _run(self, topic: str) -> str:
         """
-        Simula a recuperação de conteúdo de uma base RAG.
-        Em uma implementação real, este método usaria LangChain para:
-        1. Carregar documentos (PDFs, Markdown, etc.)
-        2. Criar embeddings e armazenar em um Vector Store (ex: ChromaDB)
-        3. Realizar uma busca por similaridade com o 'topic'
-        4. Retornar o conteúdo relevante.
+        Recupera conteúdo real da base de conhecimento usando LangChain e ChromaDB.
         """
-        # Placeholder para simular o conteúdo extraído da base de conhecimento
+        from mypress_agency.knowledge_manager import knowledge_manager
+        
+        print(f"Buscando informações na base de conhecimento para: {topic}...")
+        context = knowledge_manager.query(topic)
+        
+        if "Base de conhecimento não inicializada" in context or not context.strip():
+            return f"Aviso: Não foram encontradas informações específicas sobre '{topic}' na base de conhecimento local. Por favor, use seus conhecimentos gerais para criar o melhor conteúdo possível, mantendo o tom de voz da marca."
+            
         return f"""
-        [CONTEÚDO EXTRAÍDO DA BASE DE CONHECIMENTO RAG PARA O TÓPICO: {topic}]
-
-        **Mensagem Central:** A adoção de sistemas multi-agente baseados em CrewAI revoluciona a automação de marketing de conteúdo, permitindo a criação de posts de alta qualidade, otimizados para SEO e com base em dados internos (RAG), garantindo consistência e autoridade da marca.
-
-        **Dados Técnicos:**
-        - Framework: CrewAI (Python)
-        - Orquestração: 8 agentes especializados (Estrategista, SEO, Copywriter, Editor, Revisor, Designer, Social Media, Publisher).
-        - Integração: WordPress API REST (para publicação) e Vector Store (para RAG).
-        - Benefício Principal: Redução de 80% no tempo de produção de conteúdo e aumento de 40% no engajamento orgânico devido à otimização de SEO e qualidade editorial.
-
-        **Contexto Adicional:** O sistema deve ser capaz de lidar com a complexidade de documentos técnicos, transformando-os em linguagem acessível para o público-alvo (persona: Pequenos e Médios Empresários). O tom de voz deve ser informativo, autoritário e inspirador.
+        [CONTEÚDO REAL EXTRAÍDO DA BASE DE CONHECIMENTO RAG]
+        
+        Tópico: {topic}
+        
+        Contexto Recuperado:
+        {context}
+        
+        Instruções: Use os dados acima para fundamentar tecnicamente o post, garantindo que as informações sejam precisas e baseadas nos documentos fornecidos.
         """
 
 class WordPressPublisherToolSchema(BaseModel):
